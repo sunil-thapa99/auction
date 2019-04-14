@@ -1,0 +1,106 @@
+{% load staticfiles %}
+<nav class="navbar fixed-top navbar-expand-lg">
+   <div class="container-fluid">
+      <a class="navbar-brand" href="/">
+         <img src="{% static 'images/logo.jpg' %}" height="40" alt="Fotheby's Logo" title="Fotheby's Logo">
+      </a>
+
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#toggleNav"
+                      aria-controls="toggleNav" aria-expanded="false" aria-label="Toggle navigation">
+         <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="toggleNav">
+         <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+               {% if request.user.is_authenticated %}
+                  <a class="nav-link" href="/admin">Admin</a>
+               {% endif %}
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" href="#home">Home</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" href="#auction_event">Event</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" href="#">Pricing</a>
+            </li>
+         </ul>
+         <ul class="navbar-nav nav-flex-icons">
+            <li class="nav-item">
+               <button class="btn btn-outline-secondary" type="button"  data-toggle="modal" data-target="#searchModal">
+                  <i class="fa fa-search"></i>
+               </button>
+            </li>
+            <li class="nav-item">
+               {% if request.user.is_authenticated %}
+                  <a class="nav-link" href="{% url 'admin:logout' %}">Logout
+               {% else %}
+                  <a class="nav-link" href="/admin">Login
+               {% endif %}
+                  <i class="fa fa-user"></i>
+               </a>
+            </li>
+         </ul>
+      </div>
+   </div>
+ </nav>
+<div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog model-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Search</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form id="search_form" method="POST" action="{% url 'search' %}" data-medium-url="{% url 'medium' %}">
+        {% csrf_token %}
+         <div class="modal-body mx-3">
+            <div class="md-form mb-3">
+               <input type="text" class="form-control validate" name="product_name" placeholder="Search....">
+               <br>
+               <button type="button" class="btn btn-sm btn-outline-dark center" onclick="display_div()">Advance Search</button>
+            </div>
+            <div id="advance_search">
+              <div class="form-row md-form mb-3">
+                <div class="col-5">
+                    <select name="product_category" class="form-control validate" id="category">
+                      <option selected="">---------</option>
+                      {% for cate in categories %}
+                         <option value="{{ cate.pk }}">{{ cate.category_name }}</option>
+                      {% endfor %}
+                    </select>
+                </div>
+                <div class="col-7">
+                    <select name="product_medium_used" class="form-control validate" id="prod-med">
+                      {% for med in medium %}
+                         <option value="{{ med.pk }}">{{ med.medium_used }}</option>
+                      {% endfor %}
+                    </select>
+                 </div>
+              </div>
+              <div class="md-form mb-3">
+                <input type="text" class="form-control validate" name="product_by" placeholder="Artist Name">
+              </div>
+              <!-- <div class="md-form mb-3">
+                <label class="col-form-label">Date</label>
+                <div class="form-row">
+                  <div class="col">
+                    <input id="datepicker" type="date" name="event_date_from" class="form-control validate" placeholder="From">
+                  </div> - 
+                  <div class="col">
+                    <input id="datepicker1" type="date" name="event_date_to" class="form-control validate" placeholder="From">
+                  </div>
+                </div>
+              </div> -->
+            </div>
+         </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> Filter and Search</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

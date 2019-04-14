@@ -1,0 +1,225 @@
+{% extends 'template.html' %}
+
+{% load staticfiles %}
+{% block title %}
+	{{ title }}
+{% endblock title %}
+
+{% block body %}
+	{% include 'nav.html' %}
+	<header id="home">
+		<div id="carousel_indicator" class="carousel slide" data-ride="carousel" data-interval="6000">
+	  		<ol class="carousel-indicators">
+	    		<li data-target="#carousel_indicator" data-slide-to="0" class="active"></li>
+	    		<li data-target="#carousel_indicator" data-slide-to="1"></li>
+	    		<li data-target="#carousel_indicator" data-slide-to="2"></li>
+	  		</ol>
+	  		<div class="carousel-inner" role="listbox">
+	   			<div class="carousel-item active" style="background-image: url({% static 'images/angel.jpg' %});">
+	      			<div class="carousel-caption">
+			          	<h2 class="display-4">First Slide</h2>
+			          	<p class="lead">This is a description for the first slide.</p>
+			          	<a href="#" class="btn btn-info btn-lg">Read More</a>
+			        </div>
+	    		</div>
+	    		<div class="carousel-item" style="background-image: url({% static 'images/bird.jpg' %});">
+	      			<div class="carousel-caption">
+			          	<h2 class="display-4">First Slide</h2>
+			          	<p class="lead">This is a description for the first slide.</p>
+			          	<a href="#" class="btn btn-info btn-lg">Read More</a>
+			        </div>
+	    		</div>
+	    		<div class="carousel-item" style="background-image: url({% static 'images/coin.jpg' %});">
+	      			<div class="carousel-caption">
+			          	<h2 class="display-4">First Slide</h2>
+			          	<p class="lead">This is a description for the first slide.</p>
+			          	<a href="#" class="btn btn-info btn-lg">Read More</a>
+			        </div>
+	    		</div>
+	  		</div>
+	  		<a class="carousel-control-prev" href="#carousel_indicator" role="button" data-slide="prev">
+	    		<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+	    		<span class="sr-only">Previous</span>
+	  		</a>
+	  		<a class="carousel-control-next" href="#carousel_indicator" role="button" data-slide="next">
+	    		<span class="carousel-control-next-icon" aria-hidden="true"></span>
+	    		<span class="sr-only">Next</span>
+	  		</a>
+		</div>
+	</header>
+	
+	<div id="auction_event" class="offset">
+		<div id="event_carousel" class="carousel slide" data-ride="carousel" data-interval="6000">
+			<div class="container-fluid jumbotron">
+				<div class="row">
+			        <div class="col-lg-12 ">
+			            <h1 class="text-center">Auction Event</h1>
+			            <div class="header-line"></div>
+			        </div>
+			    </div>
+				<div class="row" id="prev_next">
+					<div class="col-xs-12 lead ml-auto">
+						<a class="btn btn-secondary-outline prev" id="prev" href="#event_carousel" title="Back"><i class="fa fa-lg fa-chevron-left"></i></a>
+                		<a class="btn btn-secondary-outline next" id="next" href="#event_carousel" title="Next"><i class="fa fa-lg fa-chevron-right"></i></a>
+					</div>
+				</div>
+			</div>
+			<div class="container p-t-0 m-t-2 carousel-inner" role="listbox">
+				<div class="row row-equal carousel-item active m-t-0">
+					<div class="col-md-4">
+						<div class="card">
+						  	<img class="card-img-top card-img-top-250" src="{% static 'images/event/auction.jpg' %}" alt="Card image cap">
+						  	<div class="card-body">
+						    	<h5 class="card-title">Event: 1</h5>
+						    	<p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+						  	</div>
+						  	<ul class="list-group list-group-flush">
+						    	<li class="list-group-item">Date: 12-May-2019</li>
+						    	<li class="list-group-item">Place: Metro Radio Arena</li>
+						  	</ul>
+						  	<div class="card-body">
+						    	<a href="#" class="card-link">Read More</a>
+						  	</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="card">
+						  	<img class="card-img-top card-img-top-250" src="{% static 'images/event/auction1.jpg' %}" alt="Card image cap">
+						  	<div class="card-body">
+						    	<h5 class="card-title">Event: 2</h5>
+						    	<p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+						  	</div>
+						  	<ul class="list-group list-group-flush">
+						    	<li class="list-group-item">Date: 23-May-2019</li>
+						    	<li class="list-group-item">Place: Metro Radio Arena</li>
+						  	</ul>
+						  	<div class="card-body">
+						    	<a href="#" class="card-link">Read More</a>
+						  	</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="card">
+						  	<img class="card-img-top card-img-top-250" src="{% static 'images/event/auction2.jpg' %}" alt="Card image cap">
+						  	<div class="card-body">
+						    	<h5 class="card-title">Event: 3</h5>
+						    	<p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+						  	</div>
+						  	<ul class="list-group list-group-flush">
+						    	<li class="list-group-item">Date: 13-Jun-2019</li>
+						    	<li class="list-group-item">Place: Metro Radio Arena</li>
+						  	</ul>
+						  	<div class="card-body">
+						    	<a href="#" class="card-link">Read More</a>
+						  	</div>
+						</div>
+					</div>
+				</div>
+				<div class="row row-equal carousel-item m-t-0">
+					<div class="col-md-4">
+						<div class="card">
+						  	<img class="card-img-top card-img-top-250" src="{% static 'images/event/auction3.jpg' %}" alt="Card image cap">
+						  	<div class="card-body">
+						    	<h5 class="card-title">Event: 4</h5>
+						    	<p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+						  	</div>
+						  	<ul class="list-group list-group-flush">
+						    	<li class="list-group-item">Date: 07-Jul-2019</li>
+						    	<li class="list-group-item">Place: Angel of Winds Arena</li>
+						  	</ul>
+						  	<div class="card-body">
+						    	<a href="#" class="card-link">Read More</a>
+						  	</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="card">
+						  	<img class="card-img-top card-img-top-250" src="{% static 'images/event/auction4.jpg' %}" alt="Card image cap">
+						  	<div class="card-body">
+						    	<h5 class="card-title">Event: 5</h5>
+						    	<p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+						  	</div>
+						  	<ul class="list-group list-group-flush">
+						    	<li class="list-group-item">Date: 30-Jul-2019</li>
+						    	<li class="list-group-item">Place: Angel of Winds Arena</li>
+						  	</ul>
+						  	<div class="card-body">
+						    	<a href="#" class="card-link">Read More</a>
+						  	</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="card">
+						  	<img class="card-img-top card-img-top-250" src="{% static 'images/event/auction5.jpg' %}" alt="Card image cap">
+						  	<div class="card-body">
+						    	<h5 class="card-title">Event: 6</h5>
+						    	<p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+						  	</div>
+						  	<ul class="list-group list-group-flush">
+						    	<li class="list-group-item">Date: 15-Aug-2019</li>
+						    	<li class="list-group-item">Place: Resort World Arena</li>
+						  	</ul>
+						  	<div class="card-body">
+						    	<a href="#" class="card-link">Read More</a>
+						  	</div>
+						</div>
+					</div>
+				</div>
+				<div class="row row-equal carousel-item m-t-0">
+					<div class="col-md-4">
+						<div class="card">
+						  	<img class="card-img-top card-img-top-250" src="{% static 'images/event/auction6.jpg' %}" alt="Card image cap">
+						  	<div class="card-body">
+						    	<h5 class="card-title">Event: 7</h5>
+						    	<p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+						  	</div>
+						  	<ul class="list-group list-group-flush">
+						    	<li class="list-group-item">Date: 27-Aug-2019</li>
+						    	<li class="list-group-item">Place: Resort World Arena</li>
+						  	</ul>
+						  	<div class="card-body">
+						    	<a href="#" class="card-link">Read More</a>
+						  	</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="card">
+						  	<img class="card-img-top card-img-top-250" src="{% static 'images/event/auction7.jpg' %}" alt="Card image cap">
+						  	<div class="card-body">
+						    	<h5 class="card-title">Event: 8</h5>
+						    	<p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+						  	</div>
+						  	<ul class="list-group list-group-flush">
+						    	<li class="list-group-item">Date: 20-Sept-2019</li>
+						    	<li class="list-group-item">Place: Angel of Winds Arena</li>
+						  	</ul>
+						  	<div class="card-body">
+						    	<a href="#" class="card-link">Read More</a>
+						  	</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="card">
+						  	<img class="card-img-top card-img-top-250" src="{% static 'images/event/auction3.jpg' %}" alt="Card image cap">
+						  	<div class="card-body">
+						    	<h5 class="card-title">Event: 9</h5>
+						    	<p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+						  	</div>
+						  	<ul class="list-group list-group-flush">
+						    	<li class="list-group-item">Date: 02-Oct-2019</li>
+						    	<li class="list-group-item">Place: Angel of Winds Arena</li>
+						  	</ul>
+						  	<div class="card-body">
+						    	<a href="#" class="card-link">Read More</a>
+						  	</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="stories" class="offset">
+	</div>
+{% endblock body %}
+
+

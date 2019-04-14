@@ -1,0 +1,42 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_modify suit_forms %}
+
+{% block content %}
+<div id="content-main">
+	<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.module_name }}_form">{% csrf_token %}{% block form_top %}{% endblock %}
+		<div>
+
+			{% if save_on_top %}{% block submit_buttons_top %}{% submit_row %}{% endblock %}{% endif %}
+			{% if errors %}
+			<p class="errornote">
+				{% blocktrans count counter=errors|length %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
+			</p>
+			{{ adminform.form.non_field_errors }}
+			{% endif %}
+
+			{% block field_sets %}
+			{% for fieldset in adminform %}
+			{% include "admin/includes/fieldset.html" %}
+			{% endfor %}
+			{% endblock %}
+
+			{% block submit_buttons_bottom %}
+			{% if not request.user.is_superuser and perms.car.readonly %}
+			{% else %}
+			{% submit_row %}
+			{% endif %}
+
+			{% endblock %}
+
+			{% if adminform and add %}
+			<script type="text/javascript">document.getElementById("{{ adminform.first_field.id_for_label }}").focus();</script>
+			{% endif %}
+
+			{# JavaScript for prepopulated fields #}
+			{% prepopulated_fields_js %}
+
+		</div>
+	</form>
+</div>
+{% endblock %}
+

@@ -1,0 +1,72 @@
+{% extends 'template.html' %}
+
+{% load staticfiles %}
+{% block title %}
+	{{ title }}
+{% endblock title %}
+
+{% block body %}
+	{% include 'nav.html' %}
+	<div class="container" id="body_data">
+		{% for result in data %}
+			<div class="card">
+				<img class="card-img-top" src="../../media/{{ result.product_image.0.image_file }}" alt="{{ result.product_name }}" title="{{ result.product_name }}">
+				<div class="card-body">
+					<u><h3 class="card-title">{{ result.product_name }}</h3></u>
+					<p class="card-text"><small class="text-muted">By: {{ result.artist }} (Date: {{ result.product_date }} A.D.)</small></p>
+					<p class="card-text">{{ result.product_desc }}</p>
+					<hr>
+					<ul class="list-group">
+						<li class="list-group-item">Category: {{ result.product_category.category_name }}</li>
+						<li class="list-group-item">Minimum Price: £ {{ result.product_min_price }}</li>
+						<li class="list-group-item">Owner: {{ result.product_seller.first_name }} {{ result.product_seller.last_name }}</li>
+						{% if result.product_medium_used %}
+							<li class="list-group-item">Medium Used: {{ result.product_medium_used.medium_used }}</li>
+						{% else %}
+							<li class="list-group-item">Medium Used: <span style="font-size: 10px;">Not Defined</span>></li>
+						{% endif %}
+						<li class="list-group-item">Dimension(length x height): {{ result.product_length }}x{{ result.product_height }}</li>
+						{% if result.product_framed in result %}
+							<li class="list-group-item">Framed: {{ result.product_framed }}</li>
+						{% endif %}
+						{% if result.product_image_type in result %}
+							<li class="list-group-item">Image Type: {{ result.product_image_type }}</li>
+						{% endif %}
+					</ul>
+					<hr>
+					<h5><i><u>Gallery</u></i></h5>
+					<div class="row">
+						{% for image in result.product_image %}
+							<div class="col-lg-4 col-md-6 col-sm-12">
+								<img class="card-img" src="../../media/{{ image.image_file }}" alt="{{ result.product_name }}" title="{{ result.product_name }}">
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+				<div class="card-footer text-muted">
+					{% if result.product_auction_date %}
+						<div class="table-responsive">
+							<table class="table table-striped">
+								<thead>
+								    <tr>
+									    <th scope="col">Event Name</th>
+									    <th scope="col">Event Date</th>
+									    <th scope="col">Event Location</th>
+								    </tr>
+								</thead>
+							  	<tbody>
+							    	<tr>
+							      		<td>{{ result.product_auction_date.event_name }}</td>
+							      		<td>{{ result.product_auction_date.event_date }}</td>
+							      		<td>@{{ result.product_auction_date.event_location }}</td>
+						    		</tr>
+							  	</tbody>
+							</table>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+
+{% endblock body %}

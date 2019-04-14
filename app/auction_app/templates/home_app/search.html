@@ -1,0 +1,30 @@
+{% extends 'template.html' %}
+
+{% load staticfiles %}
+{% block title %}
+	{{ title }}
+{% endblock title %}
+
+{% block body %}
+	{% include 'nav.html' %}
+	<div class="container-fluid" id="body_data">
+		<div class="row justify-content-center">
+			{% for result in data %}
+				<div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+					<div class="card">
+						<img class="card-img-top card-img-top-350" src="../media/{{ result.image.image_file }}" alt="{{ result.product_name }}" title="{{ result.product_name }}">
+						<div class="card-body">
+							<u><h3 class="card-title">{{ result.product_name }}</h3></u>
+							<p class="card-text"><small class="text-muted">By: {{ result.product_by }} <br> (Date: {{ result.product_date }} A.D.)</small></p>
+							<p class="card-text trunc">{{ result.product_desc }}</p>
+						</div>
+						<div class="card-footer text-muted">
+							<a href="{% url 'product' value=result.id %}" class="btn btn-primary">Read More</a>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+
+{% endblock body %}

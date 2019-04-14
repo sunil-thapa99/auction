@@ -1,0 +1,191 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
+{% extends "admin/change_list.html" %}
+{% load i18n admin_list %}
+{% block content_title %}
+<h1> Data Analysis </h1>
+{% endblock %}
+
+{% block object-tools-items %}
+{% if user.is_superuser %}
+<li><a href="import/" class="import_link">{% trans "Import" %}</a></li>
+<li><a href="export/" class="export_link">{% trans "Export" %}</a></li>
+{% else %}
+<li><button class="btn btn-lg btn-outline-dark">Export</button></li>
+{% endif %}
+{{ block.super }}
+{% endblock %}
+
+{% block result_list %}
+
+<div class="results">
+	<table id="result_list">
+		<thead>
+			<tr>
+				<th scope="col"  class="action-checkbox-column">
+				    <div class="text"><span><input type="checkbox" id="action-toggle"></span></div>
+				    <div class="clear"></div>
+				</th>
+				<th scope="col" class="sortable column-product_sale">
+					<div class="text"><a href="?o=0.2">Product sale</a></div>
+					<div class="clear"></div>
+				</th>
+				<th scope="col" class="sortable column-product_sold">
+					<div class="text"><a href="?o=1.2">Product sold</a></div>
+					<div class="clear"></div>
+				</th>
+				<th scope="col" class="sortable column-sale_date sorted ascending">
+					<div class="sortoptions">
+						<a class="sortremove" href="?o=" title="Remove from sorting"></a>
+						<a href="?o=-2" class="toggle ascending" title="Toggle sorting"></a>
+					</div>
+					<div class="text"><a href="?o=-2">Sale date</a></div>
+					<div class="clear"></div>
+				</th>
+				<th scope="col" class="column-category">
+					<div class="text"><span>Category</span></div>
+					<div class="clear"></div>
+				</th>
+				<th scope="col" class="column-category">
+					<div class="text"><span>Commission</span></div>
+					<div class="clear"></div>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for row in product_summary %}
+				<tr class="row1">
+					<td class="action-checkbox">
+						<input type="checkbox" name="_selected_action" value="{{ row.id }}" class="action-select">
+					</td>
+					<td class="field-product_sale nowrap">
+						<a href="/admin/auction_app/sales/{{ row.id }}/change/">{{ row.product_sale }}</a>
+					</td>
+					<td class="field-product_sold">£ {{ row.product_sold }}</td>
+					<td class="field-sale_date nowrap">{{ row.sale_date }}</td>
+					<td class="field-category">{{ row.category }}</td>
+					<td class="field-commision">£ {{ row.commision }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+
+<br><br>
+<canvas id="visualize_chart"></canvas>
+<style type="text/css">
+#visualize_chart{
+	width: 1200px !important;
+	height: 600px !important;
+}
+</style>
+<script>
+	var product=[];
+	var sold=[];
+	{% for row in product_summary %}
+	product.push('{{ row.product_sale }}');
+	sold.push('{{ row.product_sold }}');
+	{% endfor %}
+	var ctx = document.getElementById('visualize_chart').getContext('2d');
+	var visualize_chart = new Chart(ctx, {
+		type: 'pie',
+		data: {
+			labels: product,
+			datasets: [{
+				label: 'Total Sale',
+				data: sold,
+				backgroundColor: [
+				'rgba(255, 99, 132, 0.2)',
+				'rgba(54, 162, 235, 0.2)',
+				'rgba(54, 100, 100, 0.2)',
+				'rgba(54, 162, 54, 0.2)',
+				'rgba(235, 162, 54, 0.2)',
+				'rgba(54, 54, 54, 0.2)',
+				'rgba(162, 162, 162, 0.2)',
+				],
+				borderColor: [
+				'rgba(255, 99, 132, 1)',
+				'rgba(54, 162, 235, 1)',
+				'rgba(54, 100, 100, 1)',
+				'rgba(54, 162, 54, 1)',
+				'rgba(235, 162, 54, 1)',
+				'rgba(54, 54, 54, 1)',
+				'rgba(162, 162, 162, 1)',
+				],
+				borderWidth: 2
+			}]
+		},
+		options: {
+			scales: {
+				yAxes: [{
+					ticks: {
+						beginAtZero: true
+					}
+				}]
+			}
+		}
+	});
+
+	// function export_csv(table_element){
+	// 	var csv;
+	// 	var table_rows = document.querySelectorAll("table tr");
+
+	// 	for(var i=0; i<table_rows.length; i++){
+	// 		var r = [];
+	// 		var c = table_rows[i].querySelectorAll("td, th");
+
+	// 		for (var j = 0; j < c.length; i++) {
+	// 			r.push(c[j].innerText);
+	// 		}
+	// 		csv.push(r.join(','))
+	// 	}
+	// 	var download_file, link;
+	// 	download_file = new Blob([csv.join("\n")], {type: 'text/csv'});
+	// 	link = document.createElement('a');
+	// 	link.download = 'sales_detail.csv';
+
+	// 	link.href = window.URL.createObjectURL(download_file);
+	// 	link.style.display = 'none';
+	// 	document.body.appendChild(link);
+	// 	link.click();
+	// }
+	// document.querySelector("button").addEventListener("click", function () {
+	//     var table_element = document.querySelector("table").outerHTML;
+	// 	export_csv(table_element);
+	// });
+	function csv_download(csv, filename) {
+	    var file_csv;
+	    var csv_link;
+	    file_csv = new Blob([csv], {type: "text/csv"});
+	    csv_link = document.createElement("a");
+	    csv_link.style.display = "none";
+	    csv_link.download = filename;
+	    csv_link.href = window.URL.createObjectURL(file_csv);
+	    document.body.appendChild(csv_link);
+	    csv_link.click();
+	}
+
+	function export_csv(html, filename) {
+		var csv = [];
+		var rw = document.querySelectorAll("table tr");
+		
+	    for (var i = 0; i < rw.length; i++) {
+			var row = [], col = rw[i].querySelectorAll("td, th");
+			
+	        for (var j = 0; j < col.length; j++) 
+	            row.push(col[j].innerText);
+	        
+			csv.push(row.join(","));		
+		}
+
+	    csv_download(csv.join("\n"), filename);
+	}
+
+	document.querySelector("button").addEventListener("click", function () {
+	    var table_data = document.querySelector("table").outerHTML;
+		export_csv(table_data, "sales_Detail.csv");
+	});
+
+</script>
+{% endblock %}
