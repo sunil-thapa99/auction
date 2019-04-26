@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
-
+from django.db.models.signals import post_save
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator, MinLengthValidator
 from django.conf import settings
@@ -9,11 +9,28 @@ from django import forms
 from datetime import datetime
 from time import time
 
+TITLE_CHOICE = (
+	('Mr', "Mister"),
+	('Mrs', "Mistress"),
+	('Miss', "Miss"),
+)
+
 def storeImage(instance, filename):
 	return"auction_media/image_{0}_{1}".format(str(time()),filename)
 
 def eventImage(instance, filename):
-	return"event/image_{0}_{1}".format(str(time()),filename)	
+	return"event/image_{0}_{1}".format(str(time()),filename)
+
+def profileImage(instance, filename):
+	return"profile/image_{0}_{1}".format(str(time()),filename)	
+
+User.add_to_class('title', models.CharField(default='Mr', choices=TITLE_CHOICE, max_length=20))
+User.add_to_class('bank_account_number', models.IntegerField(default=0))
+User.add_to_class('bank_sort_code', models.CharField(default='', max_length=10))
+User.add_to_class('address', models.CharField(default='', max_length=255))
+User.add_to_class('tel_number', models.CharField(default='', max_length=15))
+User.add_to_class('profile', models.ImageField(upload_to=profileImage, default='', blank=True))
+
 
 class Category(models.Model):
 	category_name = models.CharField(max_length=50, unique=True, blank=False, null=False, \
@@ -108,7 +125,7 @@ class Product(models.Model):
 	product_by = models.CharField(verbose_name='Artist', max_length=250, blank=False, null=False)
 	product_date = models.DateField(verbose_name='Created Date', blank=False, null=False)
 
-	product_seller = models.ForeignKey(Seller, on_delete=models.CASCADE,)
+	product_seller = models.ForeignKey(Seller, on_delete=models.CASCADE, blank=True, null=True)
 	product_auction_date = models.ForeignKey(Event, on_delete=models.CASCADE, blank=True, null=True)
 
 	product_medium_used = models.ForeignKey(Medium, on_delete=models.CASCADE, blank=True, null=True)
@@ -116,6 +133,8 @@ class Product(models.Model):
 	product_height = models.FloatField(blank=False, default='')
 	product_length = models.FloatField(blank=False, default='')
 	product_image_type = models.ForeignKey(ImageType, on_delete=models.CASCADE, blank=True, null=True)
+
+	approved = models.BooleanField(default=False)
 
 	product_created = models.DateTimeField(auto_now_add=True)
 	product_updated = models.DateTimeField(auto_now=True)
@@ -160,7 +179,7 @@ class Sales(models.Model):
 
 class CommissionerBid(models.Model):
 	product_name = models.ForeignKey(Product, on_delete=models.CASCADE)
-	buyer_User = models.ForeignKey(Buyer, on_delete=models.CASCADE)
+	buyer_User = models.ForeignKey(Buyer, on_delete=models.CASCADE, blank=True, null=True)
 
 	min_bid_amount = models.FloatField(blank=False, null=False)
 	max_bid_amount = models.FloatField(blank=False, null=False)
@@ -171,3 +190,13 @@ class CommissionerBid(models.Model):
 	class Meta:
 		ordering = ('bid_updated',)
 		verbose_name_plural = 'Apply Commissioner Bid'
+
+class UserCustomProfile(models.Model):
+	user = models.OneToOneField(User, on_delete=models.CASCADE, )
+
+	class Meta:
+		verbose_name: 'Profile'
+		verbose_name_plural: 'Profile'
+
+	def __unicode__(self):
+		return self.user.first_name + " " + self.user.last_name

@@ -1,0 +1,85 @@
+{% extends "admin/change_list.html" %}
+{% load staticfiles %}
+
+{% block extrastyle %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="{% static 'css/paper-kit.css' %}">
+<link rel="stylesheet" href="{% static 'css/demo.css' %}">
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}">
+{% if cl.formset %}
+<link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}">
+{% endif %}
+{% if cl.formset or action_form %}
+<script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+{% endif %}
+{{ media.css }}
+{% if not actions_on_top and not actions_on_bottom %}
+<style>
+#changelist table thead th:first-child {width: inherit}
+</style>
+{% endif %}
+
+{% endblock %}
+
+
+{% load i18n admin_list %}
+{% block content_title %}
+<h1> User Profile </h1>
+{% endblock %}
+
+
+{% block content %}
+<div id="content-main">
+	<style type="text/css">
+	#content{
+		padding: 0 !important;
+	}
+	.avatar{
+		width: 300px;
+		height: 300px;
+		max-width: 310px !important;
+	}
+	.img-circle {
+		height: 100%;
+	}
+</style>
+<div class="page-header page-header-xs" data-parallax="true" style="height: 200px !important; background-color: #1fc8db; background-image: linear-gradient(120deg, #9fb8ad 0%, #1fc8db 51%, #2cb5e8 75%);">
+	<div class="filter"></div>
+</div>
+<div class="section profile-content">
+	<div class="container">
+		<div class="owner">
+			<div class="avatar">
+				{% if summary.profile %}
+					<img src="../../../media/{{ summary.profile }}" alt="Profile" class="img-circle img-no-padding img-responsive">
+				{% else %}
+					<img src="{% static 'images/avatar.png' %}" alt="" class="img-circle img-no-padding img-responsive">
+				{% endif %}
+			</div>
+			<div class="card bg-light mb-3" style="width: 500px; margin: 0 auto;">
+				<div class="name">
+					<h4 class="card-title">
+						Name: {{ summary.title }}. {{ summary.first_name }} {{ summary.last_name }} 
+						<hr>
+					</h4>
+				</div>
+				<div class="card-body">
+					<h6 class="card-text">Username: {{ summary.user_name }}</h6>
+					<h6 class="card-text">Email: {{ summary.email }}</h6>
+					<h6 class="card-text">Address: {{ summary.address }}</h6>
+					<h6 class="card-text">Telephone Number: {{ summary.tel_number }}</h6>
+					<h6 class="card-text">Bank Account Number: {{ summary.bank_account_number }}</h6>
+					<h6 class="card-text">Bank Sort Code: {{ summary.bank_sort_code }}</h6>
+				</div><hr>
+				<div class="card-footer text-primary">
+					Date Joined: {{ summary.date_joined }}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block pagination %}
+{% endblock %}

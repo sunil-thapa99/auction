@@ -9,6 +9,9 @@ from .filters import ProductFilter
 urlpatterns = [
     url(r'^medium/', views.load_medium, name="medium"),
     url(r'^search/$', views.search, name="search"),
+    url(r'^products/', views.products, name="products"),
+    url(r'^events/', views.events, name="events"),
     url(r'^product/(?P<value>\d+)/$', views.product, name="product"),
+    url(r'^event/(?P<value>\d+)/$', views.event, name="event"),
     url(r'^$', views.home, name='index'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

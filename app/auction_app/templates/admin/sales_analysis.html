@@ -127,33 +127,6 @@
 		}
 	});
 
-	// function export_csv(table_element){
-	// 	var csv;
-	// 	var table_rows = document.querySelectorAll("table tr");
-
-	// 	for(var i=0; i<table_rows.length; i++){
-	// 		var r = [];
-	// 		var c = table_rows[i].querySelectorAll("td, th");
-
-	// 		for (var j = 0; j < c.length; i++) {
-	// 			r.push(c[j].innerText);
-	// 		}
-	// 		csv.push(r.join(','))
-	// 	}
-	// 	var download_file, link;
-	// 	download_file = new Blob([csv.join("\n")], {type: 'text/csv'});
-	// 	link = document.createElement('a');
-	// 	link.download = 'sales_detail.csv';
-
-	// 	link.href = window.URL.createObjectURL(download_file);
-	// 	link.style.display = 'none';
-	// 	document.body.appendChild(link);
-	// 	link.click();
-	// }
-	// document.querySelector("button").addEventListener("click", function () {
-	//     var table_element = document.querySelector("table").outerHTML;
-	// 	export_csv(table_element);
-	// });
 	function csv_download(csv, filename) {
 	    var file_csv;
 	    var csv_link;

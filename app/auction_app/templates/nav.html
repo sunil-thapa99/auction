@@ -17,14 +17,42 @@
                {% endif %}
             </li>
             <li class="nav-item">
-               <a class="nav-link" href="#home">Home</a>
+              {% if title == 'Home' %}
+                <a class="nav-link" href="#home">Home</a>
+              {% else %}
+                <a class="nav-link" href="/">Home</a>
+              {% endif %}
             </li>
             <li class="nav-item">
-               <a class="nav-link" href="#auction_event">Event</a>
+              {% if title == 'Home' %}
+                <a class="nav-link" href="#pro">Products</a>
+              {% else %}
+                <a class="nav-link" href="/products/">Products</a>
+              {% endif %}
             </li>
             <li class="nav-item">
-               <a class="nav-link" href="#">Pricing</a>
+              {% if title == 'Home' %}
+                <a class="nav-link" href="#auction_event">Events</a>
+              {% else %}
+                <a class="nav-link" href="/events/">Events</a>
+              {% endif %}
             </li>
+            {% if title == 'Home' %}
+              <li class="nav-item">
+                 <a class="nav-link" href="#stories">Stories</a>
+              </li>
+            {% endif %}
+            {% if title == 'Home' %}
+              <li class="nav-item">
+                 <a class="nav-link" href="#cnt">Contact</a>
+              </li>
+            {% endif %}
+            {% if title == 'Home' %}
+              <li class="nav-item">
+                <a class="nav-link" href="#abt">About</a>
+              </li>
+            {% endif %}
+            
          </ul>
          <ul class="navbar-nav nav-flex-icons">
             <li class="nav-item">
@@ -58,42 +86,30 @@
         {% csrf_token %}
          <div class="modal-body mx-3">
             <div class="md-form mb-3">
-               <input type="text" class="form-control validate" name="product_name" placeholder="Search....">
-               <br>
+               <input type="text" class="form-control mb-4" name="product_name" placeholder="Search....">
                <button type="button" class="btn btn-sm btn-outline-dark center" onclick="display_div()">Advance Search</button>
             </div>
             <div id="advance_search">
-              <div class="form-row md-form mb-3">
-                <div class="col-5">
-                    <select name="product_category" class="form-control validate" id="category">
-                      <option selected="">---------</option>
-                      {% for cate in categories %}
-                         <option value="{{ cate.pk }}">{{ cate.category_name }}</option>
-                      {% endfor %}
-                    </select>
-                </div>
-                <div class="col-7">
-                    <select name="product_medium_used" class="form-control validate" id="prod-med">
-                      {% for med in medium %}
+              <label class="mdb-main-label mb-1">Select Category</label>
+              <div class="md-form mb-3 mt-1">
+                <select name="product_category" class="browser-default custom-select mb-4" id="category">
+                  <option selected disabled value="">-----------</option>
+                  {% for cate in categories %}
+                    <option value="{{ cate.pk }}">{{ cate.category_name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <label class="mdb-main-label mb-1">Product Medium</label>
+              <div class="md-form mb-3 mt-1">
+                <select name="product_medium_used" class="browser-default custom-select mb-4" id="prod-med">
+                  {% for med in medium %}
                          <option value="{{ med.pk }}">{{ med.medium_used }}</option>
                       {% endfor %}
-                    </select>
-                 </div>
+                </select>
               </div>
               <div class="md-form mb-3">
                 <input type="text" class="form-control validate" name="product_by" placeholder="Artist Name">
               </div>
-              <!-- <div class="md-form mb-3">
-                <label class="col-form-label">Date</label>
-                <div class="form-row">
-                  <div class="col">
-                    <input id="datepicker" type="date" name="event_date_from" class="form-control validate" placeholder="From">
-                  </div> - 
-                  <div class="col">
-                    <input id="datepicker1" type="date" name="event_date_to" class="form-control validate" placeholder="From">
-                  </div>
-                </div>
-              </div> -->
             </div>
          </div>
         <div class="modal-footer">

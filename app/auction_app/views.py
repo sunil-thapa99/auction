@@ -22,10 +22,23 @@ def get_search_value():
 # Create your views here.
 def home(request):
 	value = get_search_value()
-
+	event = Event.objects.all().values()
+	# final_data = []
+	# instance_data = []
+	products = Product.objects.all().values('id', 'product_name', 'product_by', 'product_desc').annotate().order_by('-id')[:9]
 	template_name = 'home_app/index.html'
+	for product in range(0, len(products)):
+		image = Image.objects.filter(product_image=products[product]['id']).values('image_file')[0]
+		image_list = {
+			'image': image
+		}
+		products[product].update(image_list)
+	pro_carousel_img = products[:3]
 	context ={
 		'title': 'Home',
+		'events': event,
+		'pro_carousel_img': pro_carousel_img,
+		'products': products,
 	}
 	context.update(value)
 	return render(request, template_name, context=context)
@@ -33,7 +46,7 @@ def home(request):
 def search(request):
 	value = get_search_value()
 	template_name = 'home_app/search.html'
-	data = Product.objects.all().values('id', 'product_name', 'product_by', 'product_date', 'product_desc')
+	data = Product.objects.all().values('id', 'product_name', 'product_by', 'product_date', 'product_desc', 'approved').exclude(approved=False)
 	product_filter = ProductFilter(request.POST, queryset=data)
 	product_filter = product_filter.qs
 	for product in range(0, len(product_filter)):
@@ -42,7 +55,6 @@ def search(request):
 			'image': image
 		}
 		product_filter[product].update(image_list)
-	# print(product_filter)
 	context= {
 		'title': 'Search',
 		'data': product_filter,
@@ -95,8 +107,62 @@ def product(request, value):
 			instance_data.update({'product_image_type': result['product_image_type']})
 		final_data.append(instance_data)
 	context= {
-		'title': 'Search',
+		'title': 'Product',
 		'data': final_data,
 	}
 	context.update(search_value)
+	return render(request, template_name, context=context)
+
+def event(request, value):
+	search_value = get_search_value()
+	template_name = 'home_app/event.html'
+	final_data = []
+	instance_data = {}
+	search_result = Event.objects.filter(id=value).values().annotate()[0]
+	product = Product.objects.filter(product_auction_date_id=search_result['id']).values('id', 'product_name', 'product_category').annotate()
+	for result in product:
+		print(result)
+		category = Category.objects.filter(id=result['product_category']).values('category_name')[0]
+		instance_data = {
+					'product_category': category,
+					'prod_id': result['id'],
+					'product_name': result['product_name'],
+				}
+		final_data.append(instance_data)
+	context= {
+		'title': 'Event',
+		'data': final_data,
+		'event': search_result,
+	}
+	context.update(search_value)
+	return render(request, template_name, context=context)
+
+def products(request):
+	value = get_search_value()
+	template_name = 'home_app/products.html'
+	products = Product.objects.all().values('id', 'product_name', 'product_by', 'product_desc').annotate().exclude(approved=False)
+	for product in range(0, len(products)):
+		image = Image.objects.filter(product_image=products[product]['id']).values('image_file')[0]
+		image_list = {
+			'image': image
+		}
+		products[product].update(image_list)
+	context= {
+		'title': 'Product',
+		'data': products,
+	}
+	# print(request.POST)
+	context.update(value)
+	return render(request, template_name, context=context)
+
+def events(request):
+	value = get_search_value()
+	template_name = 'home_app/events.html'
+	events = Event.objects.all().values('id', 'event_name', 'event_desc', 'event_date', 'thumbnail').annotate()
+	context= {
+		'title': 'Events',
+		'data': events,
+	}
+	# print(request.POST)
+	context.update(value)
 	return render(request, template_name, context=context)

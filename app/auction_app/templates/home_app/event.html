@@ -1,0 +1,46 @@
+{% extends 'template.html' %}
+
+{% load staticfiles %}
+{% block title %}
+	{{ title }}
+{% endblock title %}
+
+{% block body %}
+	{% include 'nav.html' %}
+	<div class="container" id="body_data">
+		<div class="card">
+			<img class="card-img-top" src="../../media/{{ event.thumbnail }}" alt="{{ event.event_name }}" title="{{ event.event_name }}">
+			<div class="card-body">
+				<u><h3 class="card-title">{{ event.event_name }}</h3></u>
+				<p class="card-text"><small class="text-muted">Location: {{ event.event_location }} (Date: {{ event.event_date }} A.D.)</small></p>
+				<p class="card-text">{{ event.event_desc }}</p>
+				<hr>
+			</div>
+			{% for result in data %}
+				<div class="card-footer text-muted">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+							    <tr>
+								    <th scope="col">Products: </th>
+								    <th scope="col">Category</th>
+								    <th scope="col"></th>
+							    </tr>
+							</thead>
+						  	<tbody>
+						    	<tr>
+						      		<td>{{ result.product_name }}</td>
+						      		<td>{{ result.product_category.category_name }}</td>
+						      		<td>
+						      			<a href="{% url 'product' value=result.prod_id %}" class="card-link">Read More</a>
+						      		</td>
+					    		</tr>
+						  	</tbody>
+						</table>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+
+{% endblock body %}

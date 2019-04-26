@@ -7,7 +7,7 @@
 
 {% block body %}
 	{% include 'nav.html' %}
-	<div class="container" id="body_data">
+	<div class="container mb-2" id="body_data">
 		{% for result in data %}
 			<div class="card">
 				<img class="card-img-top" src="../../media/{{ result.product_image.0.image_file }}" alt="{{ result.product_name }}" title="{{ result.product_name }}">
@@ -23,7 +23,7 @@
 						{% if result.product_medium_used %}
 							<li class="list-group-item">Medium Used: {{ result.product_medium_used.medium_used }}</li>
 						{% else %}
-							<li class="list-group-item">Medium Used: <span style="font-size: 10px;">Not Defined</span>></li>
+							<li class="list-group-item">Medium Used: <span style="font-size: 10px;">Not Defined</span></li>
 						{% endif %}
 						<li class="list-group-item">Dimension(length x height): {{ result.product_length }}x{{ result.product_height }}</li>
 						{% if result.product_framed in result %}
@@ -58,7 +58,7 @@
 							    	<tr>
 							      		<td>{{ result.product_auction_date.event_name }}</td>
 							      		<td>{{ result.product_auction_date.event_date }}</td>
-							      		<td>@{{ result.product_auction_date.event_location }}</td>
+							      		<td>{{ result.product_auction_date.event_location }}</td>
 						    		</tr>
 							  	</tbody>
 							</table>

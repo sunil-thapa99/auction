@@ -1,11 +1,12 @@
 from import_export.admin import ImportExportModelAdmin
 from django.contrib import admin
 from django.contrib.admin import helpers
-from .models import Category, Product, Seller, Buyer, Event, Sales, Medium, ImageType, CommissionerBid, Image
+from .models import Category, Product, Seller, Buyer, Event, Sales, Medium, ImageType, CommissionerBid, Image, UserCustomProfile
 from django.utils.text import Truncator
-from django.forms import ModelForm
+from django.forms import ModelForm, ValidationError
 from django.contrib.auth.models import User
 from django.db import models
+from django.contrib.auth.admin import UserAdmin
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -56,6 +57,9 @@ class ProductAdmin(admin.ModelAdmin):
 			'description': 'Details about the product:',
 			'fields': ['product_desc', 'product_by', 'product_date', 'product_medium_used', 'product_framed', 'product_height', 'product_length', 'product_image_type']
 			}),
+	]
+
+	restricted_fieldset = [
 		('Seller', {
 			'classes': ('suit-tab suit-tab-general'),
 			'description': 'Select Seller',
@@ -66,17 +70,28 @@ class ProductAdmin(admin.ModelAdmin):
 			'description': 'Select Auction Date',
 			'fields': ['product_auction_date']
 			}),
+		('Approve', {
+			'classes': ('suit-tab suit-tab-general'),
+			'description': 'Approve',
+			'fields': ['approved']
+			}),
 	]
 
-	# def save_model(self, request, obj, form, change):
-	# 	obj.save()
-		
-	# 	for image_file in request.FILES.getlist('product_image'):
-	# 		print(image_file)
-	# 		self.create(product_image=image_file)
+	def get_fieldsets(self, request, obj=None):
+		if request.user.is_superuser:
+			return self.fieldsets+self.restricted_fieldset
+		else:
+			return super(ProductAdmin, self).get_fieldsets(request, obj=obj)
 
-	# def delete_file(self, pk, request):
-	# 	obj = get_object_or_404(Image, pk=pk)
+	def save_model(self, request, obj, form, change):
+		if not obj.product_seller:
+			seller = Seller.objects.only('id').get(seller_username_id=request.user.id)
+			obj.product_seller = seller
+
+		if request.user.is_superuser:
+			obj.approved = True
+
+		super().save_model(request, obj, form, change)
 
 
 @admin.register(Seller)
@@ -169,25 +184,105 @@ class MediumAdmin(admin.ModelAdmin):
 	list_display = (name, 'medium_used')
 admin.site.register(ImageType)
 
+class CommissionerBidAdminForm(ModelForm):
+	class Meta:
+		model = CommissionerBid
+		fields = '__all__'
+
+	def clean(self):
+		if self.cleaned_data.get('min_bid_amount') > self.cleaned_data.get('max_bid_amount'):
+			raise ValidationError("!!! Minimum bid amount is greater than Maxmimum bid amount !!!")
+
 @admin.register(CommissionerBid)
 class CommissionerBidAdmin(admin.ModelAdmin):
+	form = CommissionerBidAdminForm
 	def name(self, obj):
-		return obj.buyer_User.buyer_username_id
-	def product(self):
-		result = self.product_name.product_name
-	if User.is_superuser:
-		list_display = ('name', )
-	else:
-		list_display = ('product', )
+		return obj.buyer_User.buyer_username.first_name + ' ' + obj.buyer_User.buyer_username.last_name
+	def product(self, obj):
+		result = obj.product_name.product_name
+		return result
 
-	def get_readonly_fields(self, request, obj=None):
-		if request.user.groups == 'Buyer':
-			return []
+	list_display = ('name', 'product', 'min_bid_amount', 'max_bid_amount', 'approved')
+	
+	fieldsets = [
+		('Details', {
+			'classes': ('suit-tab suit-tab-general',),
+			'fields': ['product_name', ]
+			}),
+		('Amount', {
+			'classes': ('suit-tab suit-tab-general',),
+			'description': 'Details about the amount:',
+			'fields': ['min_bid_amount', 'max_bid_amount']
+			}),
+	]
+
+	restricted_fieldset = [
+		('Approve', {
+			'classes': ('suit-tab suit-tab-general'),
+			'description': 'Approve',
+			'fields': ['approved']
+			}),
+	]
+
+	def get_fieldsets(self, request, obj=None):
+		if request.user.is_superuser:
+			return self.fieldsets+self.restricted_fieldset
 		else:
-			return ['approved']
+			return super(CommissionerBidAdmin, self).get_fieldsets(request, obj=obj)
+
+	def save_model(self, request, obj, form, change):
+		if not obj.buyer_User:
+			buyer = Buyer.objects.only('id').get(buyer_username_id=request.user.id)
+			obj.buyer_User = buyer
+		
+		if request.user.is_superuser:
+			obj.approved = True
+
+		super().save_model(request, obj, form, change)
 
 admin.site.site_header = 'Dashboard'
 admin.site.site_title = 'Dashboard - Login'
 admin.site.index_title = 'Welcome to the Dashboard'
 
+class AdjUserAdmin(UserAdmin):
+	UserAdmin.list_display += ('bank_account_number',)
+	UserAdmin.fieldsets[1][1]['fields'] = ('title', 'first_name', 'last_name', 'email', 'address', 'tel_number', 'profile')
+	UserAdmin.fieldsets += (
+			('Bank Details', 
+				{'fields': ('bank_account_number', 'bank_sort_code')}
+			),
+		)
+	
+
+class UserCustomProfileAdmin(admin.ModelAdmin):
+	change_list_template = 'admin/profile.html'
+
+	def changelist_view(self, request, extra_context=None):
+		user_detail = User.objects.filter(id=request.user.id).values()[0]
+		if not request.user.is_superuser:
+			extra_context = extra_context or {}
+			extra_context['readonly'] = True
+		response = super().changelist_view(request, extra_context=extra_context)
+		try:
+			query = response.context_data['cl'].queryset
+		except (AttributeError, KeyError):
+			return response
+
+		response.context_data['summary'] = {
+			'user_name': user_detail['username'],
+			'first_name': user_detail['first_name'],
+			'last_name' : user_detail['last_name'],
+			'title' : user_detail['title'],
+			'last_login' : user_detail['last_login'],
+			'email' : user_detail['email'],
+			'date_joined' : user_detail['date_joined'],
+			'bank_account_number' : user_detail['bank_account_number'],
+			'bank_sort_code' : user_detail['bank_sort_code'],
+			'address' : user_detail['address'],
+			'tel_number' : user_detail['tel_number'],
+			'profile' : user_detail['profile'],
+		}
+		return response
+		
+admin.site.register(UserCustomProfile, UserCustomProfileAdmin)
 

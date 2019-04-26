@@ -24,3 +24,12 @@ https://simpleisbetterthancomplex.com/tutorial/2016/11/28/how-to-filter-queryset
 
 April-11
 https://codepen.io/malahovks/pen/gLxLWX
+
+april -25
+https://www.creative-tim.com/
+
+avatar => https://pixabay.com/vectors/blank-profile-picture-mystery-man-973460/
+https://stackoverflow.com/questions/11764685/django-modeladmin-with-request-user-based-restrictions-on-the-fieldsets-needs-t
+https://stackoverflow.com/questions/30017334/django-foreign-key-must-be-an-instance
+https://github.com/django-notifications/django-notifications
+https://stackoverflow.com/questions/11964972/django-template-for-tag-add-li-every-4th-element
