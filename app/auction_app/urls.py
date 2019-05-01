@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 from . import views
 
 from django.conf import settings
@@ -13,5 +13,7 @@ urlpatterns = [
     url(r'^events/', views.events, name="events"),
     url(r'^product/(?P<value>\d+)/$', views.product, name="product"),
     url(r'^event/(?P<value>\d+)/$', views.event, name="event"),
+    url(r'^notifications/', include('notify.urls', 'notifications')),
+    url(r'^catalogue/(?P<value>\d+)/$', views.catalogue, name="catalogue"),
     url(r'^$', views.home, name='index'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

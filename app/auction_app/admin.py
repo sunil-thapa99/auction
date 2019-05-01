@@ -1,12 +1,17 @@
 from import_export.admin import ImportExportModelAdmin
 from django.contrib import admin
 from django.contrib.admin import helpers
-from .models import Category, Product, Seller, Buyer, Event, Sales, Medium, ImageType, CommissionerBid, Image, UserCustomProfile
+from .models import Category, Product, Seller, Buyer, Event, Sales, Medium, ImageType, CommissionerBid, Image, UserCustomProfile, Catalogue
 from django.utils.text import Truncator
 from django.forms import ModelForm, ValidationError
 from django.contrib.auth.models import User
 from django.db import models
 from django.contrib.auth.admin import UserAdmin
+
+from notify.signals import notify
+from notify.models import Notification 
+
+from datetime import date
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -90,9 +95,69 @@ class ProductAdmin(admin.ModelAdmin):
 
 		if request.user.is_superuser:
 			obj.approved = True
+			pro_id = obj.product_seller.id
+			product_name = obj.product_name
+			product_user = Product.objects.filter(id=pro_id).values('product_seller')[0]
+			seller_id = Seller.objects.filter(id=product_user['product_seller']).values('seller_username')[0]
+			user_list = User.objects.get(id=seller_id['seller_username'])
+			notify.send(request.user, recipient=user_list, actor=request.user,
+					verb='Admin has changed status of your product {}'.format(product_name), nf_type='followed_by_one_user')
 
 		super().save_model(request, obj, form, change)
 
+class NotificationAdmin(admin.ModelAdmin):
+	def get_readonly_fields(self, request, obj=None):
+		if not request.user.is_superuser:
+			return ["recipient", 'verb', 'description', 'nf_type']
+		return None
+
+	def get_queryset(self, request):
+		qs = super(NotificationAdmin, self).get_queryset(request)
+		if not request.user.is_superuser:
+			return qs.filter(recipient_id=request.user.id)
+		else:
+			return qs.all()
+
+	def get_list_display(self, request):
+		if not request.user.is_superuser:
+			return ("recipient", 'actor', 'verb', 'read')
+		else:
+			return ('recipient', 'actor', 'verb', 'obj', 'target', 'read', 'deleted')
+	list_filter = ('read', 'deleted', 'nf_type', 'created')
+	search_fields = ('verb', 'description', 'actor_text', 'target_text')
+	raw_id_fields = ('recipient', )
+
+	fieldsets = [
+		('Basic details',
+			{'fields': ('recipient', 'verb', 'description', 'nf_type')}),
+		('Mark as Read',
+		{'fields': ('read', )}),
+	]
+	restricted_fieldset = [
+		('Actor details',
+			{'fields': ('actor_content_type', 'actor_object_id',
+						'actor_text', 'actor_url_text')}),
+
+		('Object details',
+			{'fields': ('obj_content_type', 'obj_object_id',
+						'obj_text', 'obj_url_text')}),
+
+		('Target details',
+			{'fields': ('target_content_type', 'target_object_id',
+						'target_text', 'target_url_text')}),
+
+		('Other details',
+			{'fields': ('extra', 'deleted')}),
+	]
+
+	def get_fieldsets(self, request, obj=None):
+		if request.user.is_superuser:
+			return self.fieldsets+self.restricted_fieldset
+		else:
+			return super(NotificationAdmin, self).get_fieldsets(request, obj=obj)
+
+admin.site.unregister(Notification)
+admin.site.register(Notification, NotificationAdmin)
 
 @admin.register(Seller)
 class SellerAdmin(admin.ModelAdmin):
@@ -119,6 +184,16 @@ class EventAdmin(admin.ModelAdmin):
 	search_fields = ('event_name', 'event_location', )
 	suit_list_filter_horizontal = ('event_location', )
 	list_per_page = 20
+
+	def save_model(self, request, obj, form, change):
+		if request.user.is_superuser:
+			event_name = obj.event_name
+			event_date = obj.event_date
+			if event_date > date.today():
+				followers = list(User.objects.all().exclude(id=1))
+				# print(request.user)
+				notify.send(request.user, recipient_list=followers, actor=request.user,
+					verb='New Event named: {}'.format(event_name), nf_type='followed_by_multiple_user')
 
 @admin.register(Sales)
 class SalesAdmin(ImportExportModelAdmin):
@@ -286,3 +361,33 @@ class UserCustomProfileAdmin(admin.ModelAdmin):
 		
 admin.site.register(UserCustomProfile, UserCustomProfileAdmin)
 
+@admin.register(Catalogue)
+class CatalogueAdmin(admin.ModelAdmin):
+
+	change_list_template = 'admin/catalogue.html'
+
+	def changelist_view(self, request, extra_context=None):
+		if not request.user.is_superuser:
+			extra_context = extra_context or {}
+			extra_context['readonly'] = True
+		response = super().changelist_view(request, extra_context=extra_context)
+		try:
+			query = response.context_data['cl'].queryset
+		except (AttributeError, KeyError):
+			return response
+		products = Product.objects.all().values().annotate()
+		list_data = {}
+		for product in range(0, len(products)):
+			if products[product]['product_auction_date_id']:
+				event = Event.objects.filter(id=products[product]['product_auction_date_id']).values('event_name', 'event_date', 'event_location')[0]
+				list_data = {
+					'event': event
+				}
+			image = Image.objects.filter(product_image=products[product]['id']).values('image_file')[0]
+			list_data.update({
+				'image': image,
+			})
+			products[product].update(list_data)
+		
+		response.context_data['summary'] = products
+		return response

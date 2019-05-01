@@ -166,3 +166,6 @@ def events(request):
 	# print(request.POST)
 	context.update(value)
 	return render(request, template_name, context=context)
+
+def catalogue(request):
+	pass

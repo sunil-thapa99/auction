@@ -1,0 +1,87 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+{% extends "admin/change_list.html" %}
+{% load i18n admin_list %}
+{% block content_title %}
+<h1> Data Analysis </h1>
+{% endblock %}
+
+{% block object-tools-items %}
+{% endblock %}
+
+{% block result_list %}
+
+<h4>Select Product</h4>
+<select class="custom-select" id="selection">
+    <option value="" selected>Choose Product</option>
+    {% for row in summary %}
+        <option value="{{ row.id }}">{{ row.product_name }}</option>
+    {% endfor %}
+</select>
+
+{% for row in summary %}
+<div class="container-fluid mt-5 mb-2" id="catalogue{{ forloop.counter }}" style="display: none;">
+    <div class="col-12 card p-5 justify">
+        <div class="card-body">
+            <u><h3 class="card-title text-center">Catalogue of {{ row.product_name }}</h3></u>
+        </div><hr>
+        <div class="row">
+            <div class="col-5"><h6>Auction Title</h6></div>
+            <div class="col-7"><h6 class="">{{ row.event.event_name }}</h6></div>
+        </div><hr>  
+        <div class="row">
+            <div class="col-3"><h6>Location</h6></div>
+            <div class="col-3"><h6 class="">{{ row.event.event_location }}</h6></div>
+            <div class="col-3"><h6>Auction Data</h6></div>
+            <div class="col-3"><h6 class="">{{ row.event.event_date }}</h6></div>
+        </div><hr>
+        <div class="row">
+            <div class="col-5"><h6>Period/Date of Production</h6></div>
+            <div class="col-7"><h6 class="">{{ row.product_date }}</h6></div>
+        </div><hr>
+        <div class="row">
+            <div class="col-5"><h6>Piece Title</h6></div>
+            <div class="col-7"><h6 class="">{{ row.product_name }}</h6></div>
+        </div><hr>
+        <div class="row">
+            <div class="col-5"><h6>Estimate Price</h6></div>
+            <div class="col-7"><h6 class="">{{ row.product_min_price }}</h6></div>
+        </div><hr>
+        <div class="row">
+            <div class="col-5"><h6>Dimensions</h6></div>
+            <div class="col-7"><h6 class="">{{ row.product_height }} x {{ row.product_length }}</h6></div>
+        </div><hr>
+        <div class="row">
+            <div class="col-5"><h6>Artist</h6></div>
+            <div class="col-7"><h6 class="">{{ row.product_by }}</h6></div>
+        </div><hr>
+        <div class="row">
+            <div class="col-5"><h6>Lot Description</h6></div>
+            <div class="col-7"><h6 class="">{{ row.product_desc }}</h6></div>
+        </div><hr>
+        <div class="row">
+                <img width="350" height="350" src="../../../media/{{ row.image.image_file }}" alt="{{ row.product_name }}" title="{{ row.product_name }}" style="margin: 0 auto;">
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<script>
+    document.getElementById('selection').onchange = function() {
+        if(typeof prev_div != 'undefined'){
+            prev_div.style.display = 'none';
+        }
+        var select_val = document.getElementById("selection").value;
+        if(select_val != null){
+            var select_div = document.getElementById("catalogue" + select_val);
+            select_div.style.display = 'block';
+        }
+        prev_div = select_div;
+    }
+</script>
+
+{% endblock %}
+
+{% block pagination  %}
+{% endblock %}

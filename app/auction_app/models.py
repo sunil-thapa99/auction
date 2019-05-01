@@ -9,6 +9,7 @@ from django import forms
 from datetime import datetime
 from time import time
 
+
 TITLE_CHOICE = (
 	('Mr', "Mister"),
 	('Mrs', "Mistress"),
@@ -135,18 +136,20 @@ class Product(models.Model):
 	product_image_type = models.ForeignKey(ImageType, on_delete=models.CASCADE, blank=True, null=True)
 
 	approved = models.BooleanField(default=False)
-
+	notify_seen = models.BooleanField(default=False)
 	product_created = models.DateTimeField(auto_now_add=True)
 	product_updated = models.DateTimeField(auto_now=True)
 
 	def save(self, *args, **kwargs):
 		if not self.slug:
 			self.slug = slugify(self.product_name)
+
 		super().save(*args, **kwargs)
 
 	def __str__(self):
 		return self.product_name
 
+	
 
 class Image(models.Model):
 	image_file = models.FileField('File', upload_to=storeImage)
@@ -200,3 +203,9 @@ class UserCustomProfile(models.Model):
 
 	def __unicode__(self):
 		return self.user.first_name + " " + self.user.last_name
+
+class Catalogue(models.Model):
+	product = models.ForeignKey(Product, on_delete=models.CASCADE)
+	
+	def __str__(self):
+		return self.product.product_name

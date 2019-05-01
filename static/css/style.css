@@ -1,0 +1,197 @@
+body {
+	overflow-x: hidden;
+	font-family: 'Fira Sans', sans-serif;
+	font-weight: lighter;
+}
+
+#body_data{
+	padding-top: 90px;
+}
+
+.offset:before {
+  height: 4rem;
+  margin-top: -4rem;
+  content: "";
+  display: block;
+}
+
+.trunc{
+	overflow: hidden;
+	position: relative;
+	max-height: 10em;
+	text-align: justify;
+}
+
+#bg-trunc{
+	padding: 20px;
+	border-radius: 5px;
+	background: #1c5477;
+	opacity: 0.7;
+}
+
+/*Navbar Section*/
+
+.navbar{
+	text-transform: uppercase;
+	background-color: #e9e9e9;
+}
+
+.nav-item>a{
+	color: #000;
+	font-size: 1rem;
+	font-weight: bold;
+}
+
+.nav-item>a.active,
+.nav-item>a:hover{
+	color: #17a2b8;
+}
+
+nav li{
+	padding-right: 20px;
+}
+
+#navDrop{
+	cursor: pointer;
+}
+
+.navbar-toggler-icon{
+	background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0,0,0, 0.5)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+}
+
+.navbar-toggler{
+	border-color: rgb(0, 0, 0);
+}
+
+/* Image Slider Carousel Section */
+
+#carousel_indicator>.carousel-inner>.carousel-item {
+	height: 100vh;
+	background: no-repeat center center;
+	background-size: cover;
+}
+
+#carousel_indicator>.carousel-inner>.carousel-item>img{
+	height: 100%;
+}
+
+#caption {
+	/*margin-bottom: 20px !important;*/
+	top: 60% !important;
+	transform: translateY(-60%) !important;
+	bottom: initial;
+} 
+
+/* Auction Section */
+
+.jumbotron{
+	padding-bottom: 5px !important;
+	background-color: #2f353b !important;
+	border-radius: 0;
+}
+
+#prev, #next{
+	margin-bottom: 10px;
+	color: #fff !important;
+}
+
+#auction_event h1, 
+#stories h1,
+#pro h1,
+#abt h1,
+#cnt h1{
+	color: #fff;
+	font-size: 30px;
+	text-transform: uppercase;
+	font-weight: 700 !important;
+}
+
+.header-line{
+	width: 30px;
+	height: 3px;
+	background-color: #349aa3 !important;
+	margin: 0 auto 10px auto;
+}
+
+.row-equal .card {
+   width: 100%;
+   margin-bottom: 10px;
+}
+
+/* Displaying in row */
+.carousel-inner>.row-equal.active, 
+.carousel-inner>.row-equal.next, 
+.carousel-inner>.row-equal.prev {
+    display: flex;
+}
+
+/* Preventing change during transaction */
+.carousel-inner>.row-equal.active.left, 
+.carousel-inner>.row-equal.active.right {
+    opacity: 0.5;
+    display: flex;
+}
+
+/*  Card image height */
+.card-img-top-250 {
+	height: 205px;
+    max-height: 250px;
+    overflow:hidden;
+}
+
+#advance_search{
+	display: none;
+}
+
+/* Google Map */
+.map-content{
+	height: 350px;
+	overflow:hidden;
+	padding-bottom:60%;
+	position:relative;
+}
+.map-content iframe{
+	height:100%;
+	width:100%;
+	left:0;
+	top:0;
+	position:absolute;
+}
+
+#card_fix_img{
+	height: 350px;
+}
+
+
+/* max-with: 960  */
+@media screen and (max-width: 1200px) {
+	#card_fix_img{
+		height: 300px;
+	}
+}
+
+/* max-with: 960  */
+@media screen and (max-width: 960px) {
+	#carousel_indicator>.carousel-inner>.carousel-item{
+		height: 80vh;
+	}
+
+	#card_fix_img{
+		height: 200px;
+	}
+}
+
+@media screen and (max-width: 479px) {
+	#carousel_indicator>.carousel-inner>.carousel-item{
+		height: 60vh;
+	}
+}
+
+@media screen and (max-width: 750px) { 
+	#prev_next{
+		display: none;
+	}
+	#bg-trunc{
+		display: none;
+	}
+}
